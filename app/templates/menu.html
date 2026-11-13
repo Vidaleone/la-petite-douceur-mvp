@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Cardápio — La Petite Douceur{% endblock %}
+{% block content %}<section class="pagehead"><p class="eyebrow">FEITOS DIARIAMENTE</p><h1>Nosso <em>cardápio</em></h1><p>Escolha seus sabores e personalize os ingredientes disponíveis.</p></section>
+<div class="filters">{% for c in categories %}<a class="filter {{ 'active' if selected==c else '' }}" href="{{ url_for('menu',categoria=c) }}">{{ c }}</a>{% endfor %}</div>
+<div class="grid">{% for p in products %}<article class="card"><div class="emoji">{{ p.image_emoji }}</div><div class="pad"><span class="tag">{{ p.category }}</span><h3>{{ p.name }}</h3><p>{{ p.description }}</p><strong>{{ "R$ %.2f"|format(p.price)|replace(".",",") }}</strong>
+<form method="post" action="{{ url_for('add_cart',product_id=p.id) }}"><label>Quantidade <input type="number" name="qty" min="1" max="50" value="1"></label>
+{% set ingredients = p.ingredients|tojson|safe %}<details><summary>Personalizar ingredientes (+ R$ 1,00 por adicional)</summary>{% for ing in p.ingredients|from_json %}<label class="check"><input type="checkbox" name="ingredients" value="{{ ing }}"> {{ ing }}</label>{% endfor %}</details><button class="btn small" type="submit">+ Adicionar</button></form>
+{% if current_user %}<form method="post" action="{{ url_for('toggle_favorite',product_id=p.id) }}"><button class="text-button" type="submit">♡ Favoritar / remover</button></form>{% endif %}</div></article>{% else %}<p>Nenhum produto encontrado nesta categoria.</p>{% endfor %}</div>{% endblock %}
